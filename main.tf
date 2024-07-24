@@ -62,3 +62,4 @@ resource "aws_instance" "web" {
 
   # Debug: Print the instance subnet ID
   debug_subnet_id = "${local.tfstate.outputs.public_subnets.value[0]}"
+}
