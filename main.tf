@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-1" # Irlanda
+  region = "eu-west-3" # Paris
 }
 
 
@@ -49,8 +49,7 @@ data "terraform_remote_state" "remote_state" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux_2.id
   instance_type = "t3a.micro"
-  # subnet_id     = data.terraform_remote_state.remote_state.outputs.public_subnets[0]  # Accede a la primera subred pública del estado remoto
-  subnet_id     = "subnet-0b4dab45a43dbfd48"
+  subnet_id     = data.terraform_remote_state.remote_state.outputs.public_subnets[0]  # Accede a la primera subred pública del estado remoto
 
   tags = {
     Name = "instancia-tonta"
