@@ -34,14 +34,14 @@ data "aws_ami" "amazon_linux_2" {
 # ---------------------------------------------------------
 # Estado remoto
 # ---------------------------------------------------------
-data "aws_s3_bucket_object" "terraform_state" {
+data "aws_s3_object" "terraform_state" {
   bucket = "tf-state-pharos-269433206282-eu-west-1"
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
 }
 
 # Verifica que el contenido del archivo no sea null
 locals {
-  tfstate_content = length(data.aws_s3_bucket_object.terraform_state.body) > 0 ? data.aws_s3_bucket_object.terraform_state.body : "{}"
+  tfstate_content = data.aws_s3_object.terraform_state.body != null && data.aws_s3_object.terraform_state.body != "" ? data.aws_s3_object.terraform_state.body : "{}"
   tfstate = jsondecode(local.tfstate_content)
 }
 
