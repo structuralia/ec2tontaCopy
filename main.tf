@@ -39,8 +39,9 @@ data "aws_s3_object" "terraform_state" {
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
 }
 
+debug "Retrieved data", data.aws_s3_object.terraform_state.body
+
 locals {
-  debug "Retrieved data", data.aws_s3_object.terraform_state.body
   state_outputs = jsondecode(data.aws_s3_object.terraform_state.body)["outputs"]
 }
 
