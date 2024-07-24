@@ -37,11 +37,13 @@ data "aws_ami" "amazon_linux_2" {
 data "aws_s3_object" "terraform_state" {
   bucket = "tf-state-pharos-269433206282-eu-west-1"
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
+  region = "eu-west-1"
 }
 
-# Decodifica el contenido JSON del terraform.tfstate
+# Verifica que el contenido del archivo no sea null
 locals {
-  tfstate = jsondecode(data.aws_s3_object.terraform_state.body)
+  tfstate_content = data.aws_s3_object.terraform_state.body != "" ? data.aws_s3_object.terraform_state.body : "{}"
+  tfstate = jsondecode(local.tfstate_content)
 }
 
 resource "aws_instance" "web" {
