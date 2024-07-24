@@ -34,17 +34,22 @@ data "aws_ami" "amazon_linux_2" {
 # ---------------------------------------------------------
 # Estado remoto
 # ---------------------------------------------------------
-data "aws_s3_object" "base" {
+data "aws_s3_object" "terraform_state" {
   bucket = "tf-state-pharos-269433206282-eu-west-1"
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
 }
 
-resource "aws_instance" "web" {
-    ami           = data.aws_ami.amazon_linux_2.id
-    instance_type = "t3a.micro"
-    subnet_id     = data.aws_s3_object.base.outputs.public_subnets
+# Decodifica el contenido JSON del terraform.tfstate
+locals {
+  tfstate = jsondecode(data.aws_s3_object.terraform_state.body)
+}
 
-    tags = {
-        Name = "instancia-tonta"
-    }
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t3a.micro"
+  subnet_id     = local.tfstate.outputs.public_subnets.value[0]
+
+  tags = {
+    Name = "instancia-tonta"
+  }
 }
