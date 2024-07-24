@@ -39,18 +39,15 @@ data "aws_s3_object" "terraform_state" {
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
 }
 
-# Verifica que el contenido del archivo no sea null
 locals {
-  tfstate_content = data.aws_s3_object.terraform_state.body != null && data.aws_s3_object.terraform_state.body != "" ? data.aws_s3_object.terraform_state.body : "{}"
-  tfstate = jsondecode(local.tfstate_content)
+  state_outputs = jsondecode(data.aws_s3_object.terraform_state.body)["outputs"]
 }
 
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux_2.id
   instance_type = "t3a.micro"
-  subnet_id     = local.tfstate.outputs.public_subnets.value[0]
-
-  tags = {
+  subnet_id     = local.state_outputs["public_subnets"].value[0]
+  tags         = {
     Name = "instancia-tonta"
   }
 }
