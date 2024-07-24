@@ -34,18 +34,14 @@ data "aws_ami" "amazon_linux_2" {
 # ---------------------------------------------------------
 # Estado remoto
 # ---------------------------------------------------------
-data "aws_s3_object" "terraform_state" {
-  bucket = "tf-state-pharos-269433206282-eu-west-1"
-  key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
-}
+resource "terraform_remote_state" "remote_state" {
+  backend {
+    type = "s3"
+    bucket = "tf-state-pharos-269433206282-eu-west-1"
+    key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
+  }
 
-# Verify that the file content is not null
-locals {
-  # Debug: Print the state file content (optional)
-  debug_state_content = "${data.aws_s3_object.terraform_state.body}"
-
-  tfstate_content = data.aws_s3_object.terraform_state.body != null && data.aws_s3_object.terraform_state.body != "" ? data.aws_s3_object.terraform_state.body : "{}"
-  tfstate        = jsondecode(tfstate_content)  # Remove reference to "coalesce"
+  path = "outputs.public_subnets.value"
 }
 
 # ---------------------------------------------------------
@@ -54,12 +50,9 @@ locals {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux_2.id
   instance_type = "t3a.micro"
-  subnet_id     = local.tfstate.outputs.public_subnets.value[0]
+  subnet_id     = terraform_remote_state.remote_state.value  # Access public subnets from remote state
 
   tags = {
     Name = "instancia-tonta"
   }
-
-  # Debug: Print the instance subnet ID
-  debug_subnet_id = "${local.tfstate.outputs.public_subnets.value[0]}"
 }
