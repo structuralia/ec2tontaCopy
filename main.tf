@@ -40,6 +40,7 @@ data "aws_s3_object" "terraform_state" {
 }
 
 locals {
+  debug "Retrieved data", data.aws_s3_object.terraform_state.body
   state_outputs = jsondecode(data.aws_s3_object.terraform_state.body)["outputs"]
 }
 
