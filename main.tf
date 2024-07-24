@@ -38,7 +38,8 @@ data "terraform_remote_state" "remote_state" {
   backend = "s3"
   config = {
     bucket = "tf-state-pharos-269433206282-eu-west-1"
-    key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
+    # key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
+    key    = var.path
     region = "eu-west-1"
   }
 }
