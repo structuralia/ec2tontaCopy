@@ -41,11 +41,11 @@ data "aws_s3_object" "terraform_state" {
 
 # Verify that the file content is not null
 locals {
-  # Debug: Print the state file content
+  # Debug: Print the state file content (optional)
   debug_state_content = "${data.aws_s3_object.terraform_state.body}"
 
   tfstate_content = data.aws_s3_object.terraform_state.body != null && data.aws_s3_object.terraform_state.body != "" ? data.aws_s3_object.terraform_state.body : "{}"
-  tfstate        = jsondecode(coalesce(tfstate_content, "{}"))
+  tfstate        = jsondecode(tfstate_content)  # Remove reference to "coalesce"
 }
 
 # ---------------------------------------------------------
