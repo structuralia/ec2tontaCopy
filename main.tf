@@ -34,7 +34,7 @@ data "aws_ami" "amazon_linux_2" {
 # ---------------------------------------------------------
 # Estado remoto
 # ---------------------------------------------------------
-resource "terraform_remote_state" "remote_state" {
+data "terraform_remote_state" "remote_state" {
   backend {
     type = "s3"
     bucket = "tf-state-pharos-269433206282-eu-west-1"
@@ -50,7 +50,7 @@ resource "terraform_remote_state" "remote_state" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.amazon_linux_2.id
   instance_type = "t3a.micro"
-  subnet_id     = terraform_remote_state.remote_state.value  # Access public subnets from remote state
+  subnet_id     = data.terraform_remote_state.remote_state.value  # Access public subnets from remote state
 
   tags = {
     Name = "instancia-tonta"
