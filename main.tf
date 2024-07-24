@@ -31,10 +31,21 @@ data "aws_ami" "amazon_linux_2" {
     }
 }
 
+# ---------------------------------------------------------
+# Estado remoto
+# ---------------------------------------------------------
+data "terraform_remote_state" "base" {
+  backend = "local"
+
+  config = {
+    path = var.path
+  }
+}
+
 resource "aws_instance" "web" {
     ami           = data.aws_ami.amazon_linux_2.id
     instance_type = "t3a.micro"
-    subnet_id     = var.subnet_id
+    subnet_id     = data.terraform_remote_state.base.outputs.public_subnets[0]
 
     tags = {
         Name = "instancia-tonta"
