@@ -37,7 +37,6 @@ data "aws_ami" "amazon_linux_2" {
 data "aws_s3_object" "terraform_state" {
   bucket = "tf-state-pharos-269433206282-eu-west-1"
   key    = "aws_vpc_tonta/Structuralia/dev/vptonta/terraform.tfstate"
-  region = "eu-west-1"
 }
 
 # Verifica que el contenido del archivo no sea null
