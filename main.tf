@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-3" # Paris
+  region = "eu-west-1" # Irlanda
 }
 
 
